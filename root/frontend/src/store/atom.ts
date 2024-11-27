@@ -1,11 +1,30 @@
 import {atom} from 'recoil'
 
-export const othersChatState= atom({
-    key:'others chat state',
-    default: ['']
+
+
+interface Chat{
+    key:string,
+    default: string[]
+}
+
+const chatStateInit : Chat={
+    key:'chat state',
+    default:[]
+} 
+
+export const chatState= atom( chatStateInit)
+
+export const roomIdState = atom({
+    key:'roomdId state',
+    default:false
 })
 
-export const myChatState = atom({
-    key:'my chat state',
-    default :['']
+export const roomCodeState =atom({
+    key:'room code state',
+    default:''
+})
+
+export const userNameState= atom({
+    key:'user name state ',
+    default:''
 })

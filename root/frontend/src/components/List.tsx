@@ -1,12 +1,7 @@
-interface Content{
-    title:String,
-    status:boolean
-}
+export default function List() {
+  fetch("http://localhost:8080/")
+    .then((response) => response.json())
+    .then((data) => console.log(data));
 
-interface ListContent {
-    item: Content
+  return <></>;
 }
-  
-export default function List( {item} :ListContent ){
-    return <><div>{item.title}</div><div>{item.status}</div></>
-  }
