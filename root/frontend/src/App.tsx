@@ -1,6 +1,6 @@
 import { RecoilRoot } from "recoil"
-import ChatBox from "./components/ChatBox" 
-import List from "./components/List";
+import Home from "./components/Home" 
+
 
 export default function App(){
     
@@ -10,7 +10,7 @@ export default function App(){
     
     return( <div className="h-full">
     <RecoilRoot>
-      <ChatBox/>
+      <Home/>
     </RecoilRoot>
     
     </div>);
