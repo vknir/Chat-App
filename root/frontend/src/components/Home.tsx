@@ -13,7 +13,7 @@ export default function Home() {
  
 
   return (
-    <div className="h-screen w-screen bg-white">
+    <div className="h-fit w-screen bg-white px-4 py-6 font-jetbrains flex ">
       {roomId ? (
         <ChatBox socket={socket}/>
       ) : (
