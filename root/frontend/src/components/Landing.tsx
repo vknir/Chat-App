@@ -51,10 +51,12 @@ export default function Landing({ socket }: Props) {
       };
       if (socket != null) {
         socket?.send(JSON.stringify(dataSend));
+        
         socket.onmessage = (event: MessageEvent) => {
          const response =(JSON.parse(event.data))
          if(response.exist )
          {
+          setRoomCode(inputRoomCode.trim().toUpperCase())
             setRoomId(true)
          }else{
           setRoomId(false)

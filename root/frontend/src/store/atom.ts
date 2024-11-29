@@ -1,10 +1,13 @@
 import {atom} from 'recoil'
 
-
+interface Msg{
+    msg:string,
+    mine:boolean
+}
 
 interface Chat{
     key:string,
-    default: string[]
+    default: Msg[]
 }
 
 const chatStateInit : Chat={
