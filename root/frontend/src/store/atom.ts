@@ -31,3 +31,11 @@ export const userNameState= atom({
     key:'user name state ',
     default:''
 })
+
+export const displayNotificationState= atom({
+    default:{
+        type:0,
+        display:false
+    },
+    key:'display notification state'
+})
