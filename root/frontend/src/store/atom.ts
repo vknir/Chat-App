@@ -2,6 +2,7 @@ import {atom} from 'recoil'
 
 interface Msg{
     msg:string,
+    username:string,
     mine:boolean
 }
 

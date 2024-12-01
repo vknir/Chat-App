@@ -7,7 +7,7 @@ export default function Mode() {
         setDark(prev=>!prev)
     }
     return (
-    <div className="hover:cursor-pointer hover:scale-125 dark:text-white transition-all duration-200 absolute z-50 right-2 top-2 sm:right-10 sm:top-10" onClick={handleClick}>
+    <div className="hover:cursor-pointer hover:scale-125 dark:text-white transition-all duration-200 absolute z-50 right-2 top-2 sm:right-10 sm:top-10 border dark:boder-white p-1 rounded" onClick={handleClick}>
         {
              dark?
       <>

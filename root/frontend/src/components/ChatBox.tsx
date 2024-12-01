@@ -1,6 +1,7 @@
 import { chatState, roomCodeState } from "../store/atom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { displayNotificationState } from "../store/atom";
+import { displayNotificationState, userNameState } from "../store/atom";
+import { useRef, useEffect } from "react";
 import Notification from "./Notification";
 
 interface Props {
@@ -12,6 +13,7 @@ interface SendData {
   payload: {
     roomId?: string;
     message?: string;
+    username?: string;
   };
 }
 
@@ -19,26 +21,44 @@ export default function ChatBox({ socket }: Props) {
   const roomCode = useRecoilValue(roomCodeState);
   const [chat, setChat] = useRecoilState(chatState);
   const setDisplayNotification = useSetRecoilState(displayNotificationState);
+  const username = useRecoilValue(userNameState);
+  const chatContainerRef=useRef<HTMLDivElement>(null)
+  let prevUsername = "";
 
+  
+  useEffect(()=>{
+    const element : ( HTMLDivElement |null )= chatContainerRef.current;
+    
+    if( element != null)
+        element.scrollTop=element.scrollHeight
+    else
+      element
+  },[chat])
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const msg = ((e.target as HTMLFormElement)[0] as HTMLInputElement).value;
-    const myMsg = { msg: msg, mine: true };
+    const myMsg = { msg: msg, mine: true, username: username };
 
     const dataSend: SendData = {
       type: "message",
       payload: {
         message: msg,
         roomId: roomCode,
+        username: username,
       },
     };
 
     if (socket != null) {
       socket.onmessage = (event: MessageEvent) => {
         const response = JSON.parse(event.data);
-        const otherMsg = { msg: response.message, mine: false };
-        console.log(otherMsg);
-        setChat((prev) => [...prev, otherMsg]);
+        const otherMsg = {
+          msg: response.message,
+          mine: false,
+          username: response.username,
+        };
+
+        setChat((prev) => [  ...prev, otherMsg]);
       };
 
       socket.send(JSON.stringify(dataSend));
@@ -48,7 +68,7 @@ export default function ChatBox({ socket }: Props) {
 
   return (
     <>
-      <div className="h-full flex flex-col border p-5 gap-2 rounded-md">
+      <div className="h-full w-fit sm:w-98 flex flex-col border p-5 gap-2 rounded-md">
         <div className="flex items-center text-2xl font-semibold gap-2 dark:text-white transition-all duration-200">
           <>
             <svg
@@ -105,12 +125,22 @@ export default function ChatBox({ socket }: Props) {
             {""}
           </div>
         </div>
-        <div className="overflow-auto border h-full rounded-md">
+        <div ref={chatContainerRef}  className="overflow-auto scroll-snap-y-container  border h-full rounded-md p-4 flex flex-col">
+       
           {chat.map((singleChat, index) => {
+            let result = prevUsername === singleChat.username
+            prevUsername=singleChat.username
             return (
-              <p key={index + "" + singleChat.msg.length}>{singleChat.msg}</p>
+             
+              <div className={`${singleChat.mine ?'text-right self-end':''} text-white dark:text-black flex flex-col`} key={index+''+singleChat.msg}>
+                <p className={` ${result ? 'hidden': 'opacity-100'}  text-xs dark:text-gray-400  text-neutral-500`}>{singleChat.username}</p>
+                <p className={`${singleChat.mine ? 'self-end bg-neutral-400 dark:bg-zinc-400 ':''} w-fit px-2 py-1 bg-black dark:bg-white rounded-md mt-1`}>{singleChat.msg}</p>
+              </div>
+              
+
             );
           })}
+          
         </div>
         <form onSubmit={handleSubmit} className="flex gap-4 justify-between">
           <input

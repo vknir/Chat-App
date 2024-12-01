@@ -28,7 +28,7 @@ wss.on("connection", function connection(ws) {
       if( roomMap.get(`${dataObj.payload.roomId}`) !=undefined){
         roomMap.get(`${dataObj.payload.roomId}`)?.push(ws)
        
-        console.log(roomMap.get(`${dataObj.payload.roomId}`)?.length)
+       
         ws.send(JSON.stringify({exist:true}))
       }
       else{
@@ -40,13 +40,14 @@ wss.on("connection", function connection(ws) {
     {
       
       roomMap.set(`${dataObj.payload.roomId}`, [])
-      console.log(roomMap.get(`${dataObj.payload.roomId}`)?.length)
+      
     }
     else if( dataObj.type === 'message')
     {
+     
       roomMap.get(`${dataObj.payload.roomId}`)?.forEach( (client)=>{
         if (client.readyState === WebSocket.OPEN && client != ws) 
-        client.send(JSON.stringify( {message :`${dataObj.payload.message}`}))
+        client.send(JSON.stringify( {message :`${dataObj.payload.message}`, username: dataObj.payload.username}))
       })
     }
   })

@@ -4,6 +4,7 @@ import {
   roomCodeState,
   roomIdState,
   displayNotificationState,
+  userNameState,
 } from "../store/atom";
 import Notification from "./Notification";
 
@@ -25,10 +26,11 @@ export default function Landing({ socket }: Props) {
   const [roomCode, setRoomCode] = useRecoilState(roomCodeState);
   const setRoomId = useSetRecoilState(roomIdState);
   const [inputRoomCode, setInputRoomCode] = useState("");
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useRecoilState(userNameState);
   const [displayNotification, setDisplayNotification] = useRecoilState(
     displayNotificationState
   );
+  
 
   const handleClickGenerate = () => {
     const currentRoomCode = getRandom().toUpperCase();
