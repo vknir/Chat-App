@@ -6,7 +6,7 @@ import useSocket from "../hooks/useSocket";
 import Mode from "./Mode";
 
 export default function Home() {
-  const socket = useSocket("ws://localhost:8080");
+  const socket = useSocket("https://chat-app-hax4.onrender.com");
   const roomId = useRecoilValue(roomIdState);
 
   return (
