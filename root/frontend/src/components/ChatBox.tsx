@@ -1,6 +1,6 @@
 import { chatState, roomCodeState } from "../store/atom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { displayNotificationState, userNameState } from "../store/atom";
+import { displayNotificationState, userNameState ,usersState} from "../store/atom";
 import { useRef, useEffect } from "react";
 import Notification from "./Notification";
 
@@ -22,6 +22,7 @@ export default function ChatBox({ socket }: Props) {
   const [chat, setChat] = useRecoilState(chatState);
   const setDisplayNotification = useSetRecoilState(displayNotificationState);
   const username = useRecoilValue(userNameState);
+  const users=useRecoilValue(usersState)
   const chatContainerRef=useRef<HTMLDivElement>(null)
   let prevUsername = "";
 
@@ -33,11 +34,14 @@ export default function ChatBox({ socket }: Props) {
         element.scrollTop=element.scrollHeight
     else
       element
+
+    
   },[chat])
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const msg = ((e.target as HTMLFormElement)[0] as HTMLInputElement).value;
+    ((e.target as HTMLFormElement)[0] as HTMLInputElement).value='';
     const myMsg = { msg: msg, mine: true, username: username };
 
     const dataSend: SendData = {
@@ -65,6 +69,8 @@ export default function ChatBox({ socket }: Props) {
     }
     setChat((prev) => [...prev, myMsg]);
   };
+
+ 
 
   return (
     <>
@@ -121,8 +127,8 @@ export default function ChatBox({ socket }: Props) {
           </div>
 
           <div className="">
-            <p>Users:</p>
-            {""}
+            <p>Users: { users}</p>
+           
           </div>
         </div>
         <div ref={chatContainerRef}  className="overflow-auto scroll-snap-y-container  border h-full rounded-md p-4 flex flex-col">

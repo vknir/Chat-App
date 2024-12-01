@@ -40,3 +40,8 @@ export const displayNotificationState= atom({
     },
     key:'display notification state'
 })
+
+export const usersState = atom({
+    default:0,
+    key:'users state'
+})

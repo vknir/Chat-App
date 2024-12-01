@@ -5,6 +5,7 @@ import {
   roomIdState,
   displayNotificationState,
   userNameState,
+  usersState
 } from "../store/atom";
 import Notification from "./Notification";
 
@@ -17,6 +18,7 @@ interface SendData {
   payload: {
     roomId?: string;
     message?: string;
+    username?:string
   };
 }
 const getRandom = () =>
@@ -27,6 +29,7 @@ export default function Landing({ socket }: Props) {
   const setRoomId = useSetRecoilState(roomIdState);
   const [inputRoomCode, setInputRoomCode] = useState("");
   const [username, setUsername] = useRecoilState(userNameState);
+  const setUsers= useSetRecoilState(usersState)
   const [displayNotification, setDisplayNotification] = useRecoilState(
     displayNotificationState
   );
@@ -63,6 +66,7 @@ export default function Landing({ socket }: Props) {
           type: "join",
           payload: {
             roomId: `${inputRoomCode.trim().toUpperCase()}`,
+            username: username,
           },
         };
         if (socket != null) {
@@ -72,6 +76,7 @@ export default function Landing({ socket }: Props) {
             const response = JSON.parse(event.data);
             if (response.exist) {
               setRoomCode(inputRoomCode.trim().toUpperCase());
+              setUsers(response.length)
               setRoomId(true);
             } else {
               setRoomId(false);
@@ -144,7 +149,7 @@ export default function Landing({ socket }: Props) {
               <>
                 {roomCode}
                 <div
-                  onClick={() => {
+                  onClick={() => {  
                     navigator.clipboard.writeText(roomCode);
                     setDisplayNotification({ type: 1, display: true });
                   }}

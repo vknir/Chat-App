@@ -17,7 +17,7 @@ export default function Notification(){
         },2500)
     },[displayNotification.display])
     
-    return <div className={`${displayNotification.display ? 'opacity-1':'opacity-0'}  absolute z-50 bottom-5 right-10 transition-opacity duration-200  border border-black rounded p-2 bg-white shadow dark:bg-black dark:text-white dark:border-white`}>
+    return <div className={`${displayNotification.display ? 'opacity-1':'opacity-0'} mx-auto  absolute z-50 bottom-5 sm:right-10 transition-opacity duration-200  border border-black rounded p-2 bg-white shadow dark:bg-black dark:text-white dark:border-white`}>
     {
        displayNotification.type == 0 ? <p>Please enter a room code</p>:
 
