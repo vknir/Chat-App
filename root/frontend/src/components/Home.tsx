@@ -10,7 +10,7 @@ export default function Home() {
   const roomId = useRecoilValue(roomIdState);
 
   return (
-    <div className="h-screen w-screen bg-white dark:bg-black px-4 py-7 font-jetbrains flex items-center justify-center transition-all duration-500 ">
+    <div className="h-screen w-screen bg-white dark:bg-black p-12 font-jetbrains flex items-center justify-center transition-all duration-500 ">
       {roomId ? <ChatBox socket={socket} /> : <Landing socket={socket} />}
       <Mode />
     </div>
