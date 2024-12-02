@@ -1,4 +1,4 @@
-import { roomIdState, roomCodeState } from "../store/atom";
+import { roomIdState } from "../store/atom";
 import { useRecoilValue } from "recoil";
 import Landing from "./Landing";
 import ChatBox from "./ChatBox";

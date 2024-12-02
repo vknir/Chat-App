@@ -30,7 +30,7 @@ export default function Landing({ socket }: Props) {
   const [inputRoomCode, setInputRoomCode] = useState("");
   const [username, setUsername] = useRecoilState(userNameState);
   const setUsers= useSetRecoilState(usersState)
-  const [displayNotification, setDisplayNotification] = useRecoilState(
+  const  setDisplayNotification = useSetRecoilState(
     displayNotificationState
   );
   
@@ -48,6 +48,7 @@ export default function Landing({ socket }: Props) {
     };
 
     socket?.send(JSON.stringify(dataSend));
+    
   };
 
   const handleSubmitJoinRoom = (event: React.FormEvent) => {
