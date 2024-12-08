@@ -1,77 +1,120 @@
-import express, { json } from "express";
-import { WebSocketServer, WebSocket } from "ws";
-import cors from "cors";
+import express from "express";
 import "dotenv/config";
+import { WebSocket, WebSocketServer } from "ws";
+import cors from "cors";
 import { v4 as uuid, v4 } from "uuid";
 
 const app = express();
-const httpServer = app.listen(process.env.PORT || 8080);
-app.use(cors());
-const wss = new WebSocketServer({ server: httpServer });
+const port = process.env.PORT || 8080;
+
 const roomMap = new Map<string, string[]>();
-const allConnections = new Map<string, WebSocket>();
+const clientMap = new Map<string, WebSocket>();
 
-function main() {
-  wss.on("connection", function connection(ws) {
-    ws.on("error", console.error);
-    ws.send('hello from server')
-    const uuid = v4();
-    allConnections.set(uuid, ws);
+app.use(cors());
 
-    ws.on("message", (data) => {
-      const dataObj = JSON.parse(data.toString());
-      if (dataObj.type === "join") {
-        if (roomMap.get(`${dataObj.payload.roomId}`) != undefined) {
-          roomMap.get(`${dataObj.payload.roomId}`)?.push(uuid);
+const httpserver = app.listen(port, () => {
+  console.log(`Server listening on port `);
+});
 
-          ws.send(
-            JSON.stringify({
-              exist: true,
-              length: roomMap.get(`${dataObj.payload.roomId}`)?.length,
-            })
-          );
-        } else {
-          ws.send(JSON.stringify({ exist: false }));
+const wss = new WebSocketServer({ server: httpserver });
+
+async function main() {
+  wss.on("connection", function connection(ws: WebSocket) {
+    const clientId = v4();
+    clientMap.set(clientId, ws);
+
+    ws.on("message", (request) => {
+      const data = JSON.parse(request.toString());
+
+      switch (data.type) {
+        case "make": {
+          const roomId = data.payload.roomId;
+
+          roomMap.set(roomId, []);
+
+          ws.send("Room created");
+          break;
         }
-      } else if (dataObj.type === "make") {
-        roomMap.set(`${dataObj.payload.roomId}`, []);
-      } else if (dataObj.type === "message") {
-        const sender = allConnections.get(uuid);
-        roomMap.get(dataObj.payload.roomId)?.forEach((client) => {
-          const websocket = allConnections.get(client);
-          if (websocket != sender && websocket?.readyState === WebSocket.OPEN)
-            websocket.send(
-              JSON.stringify({
-                message: dataObj.payload.message,
-                username: dataObj.payload.username,
-              })
-            );
-        });
+        case "join": {
+          const roomId = data.payload.roomId;
+
+          const roomExists = roomMap.get(roomId);
+
+          if (roomExists) {
+            const username = data.payload.username;
+
+            roomMap.get(roomId)?.push(clientId);
+
+            roomMap.forEach((room) => {
+              room.forEach((member) => {
+                const socket = clientMap.get(member);
+                if (member != clientId && socket?.readyState === WebSocket.OPEN)
+                  socket?.send(username + " has joined ");
+              });
+            });
+
+            ws.send(JSON.stringify({ exists: true }));
+          } else {
+            ws.send(JSON.stringify({ exists: false }));
+          }
+          break;
+        }
+        case "message": {
+          const message = data.payload.message;
+          const roomId = data.payload.roomId;
+          const username = data.payload.username;
+          const room = roomMap.get(roomId);
+
+          room?.forEach((member) => {
+            if (member != clientId) {
+              const socket = clientMap.get(member);
+              if (socket?.readyState === WebSocket.OPEN)
+                socket.send(
+                  JSON.stringify({ username: username, message: message })
+                );
+            }
+          });
+
+          break;
+        }
       }
     });
 
-    ws.on("close", (data) => {
-      const socket = allConnections.get(uuid);
-      allConnections.delete(uuid);
+    ws.on("close", (request) => {
+      clientMap.delete(clientId);
 
-      roomMap.forEach((room) => {
-        room.splice(room.indexOf(uuid, 0), 1);
+      roomMap.forEach((room, roomId) => {
+        
+        
+
+        const index = room.indexOf(clientId);
+        if (index >= 0) {
+          room.splice(index, 1);
+          
+          room.forEach((member)=>{
+            const socket = clientMap.get(member)
+            if( socket?.readyState === WebSocket.OPEN)
+              socket.send('a user has left the chat')
+          })
+
+         
+        }
+        if( roomMap.get(roomId)?.length == 0){
+          roomMap.delete(roomId);
+          console.log('room was empty so it was deleted :(')
+        }
       });
 
-      roomMap.forEach((room, index) => {
-        if (room.length < 1) roomMap.delete(index);
-      });
-    });
-  });
 
-  app.get("/", (req, res) => {
-    let users: WebSocket[] = [];
-    wss.clients.forEach((client) => {
-      users.push(client);
-    });
 
-    res.json({ number: users });
+    });
   });
 }
 
-main();
+app.get("/", async (req, res) => {
+  main().then(() => {
+    res.json({
+      message: "server has started",
+    });
+  });
+});
