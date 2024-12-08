@@ -48,8 +48,7 @@ async function main() {
             roomMap.forEach((room) => {
               room.forEach((member) => {
                 const socket = clientMap.get(member);
-                if (member != clientId && socket?.readyState === WebSocket.OPEN)
-                  socket?.send(username + " has joined ");
+               
               });
             });
 
