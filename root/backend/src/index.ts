@@ -45,12 +45,7 @@ async function main() {
 
             roomMap.get(roomId)?.push(clientId);
 
-            roomMap.forEach((room) => {
-              room.forEach((member) => {
-                const socket = clientMap.get(member);
-               
-              });
-            });
+           
 
             ws.send(JSON.stringify({ exists: true }));
           } else {
@@ -63,6 +58,7 @@ async function main() {
           const roomId = data.payload.roomId;
           const username = data.payload.username;
           const room = roomMap.get(roomId);
+          console.log(room)
 
           room?.forEach((member) => {
             if (member != clientId) {
