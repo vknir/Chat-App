@@ -53,7 +53,7 @@ Everone's welcome to contribute to this project. To contribute follow these step
 ## Tech Stack
 1. Frontend
    - [Vite ](https://vite.dev/)
-   - [React ( great for SPAs )](https://react.dev/)
+   - [React](https://react.dev/)
 3. Backend
    - [Node.js](https://nodejs.org/en)
    - [Express.js](https://expressjs.com/)
