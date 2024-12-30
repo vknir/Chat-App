@@ -52,9 +52,8 @@ Everone's welcome to contribute to this project. To contribute follow these step
 
 ## Tech Stack
 1. Frontend
-   - [Vite ](https://vite.dev/)
    - [React](https://react.dev/)
-3. Backend
+2. Backend
    - [Node.js](https://nodejs.org/en)
    - [Express.js](https://expressjs.com/)
    - [WebSockets](https://www.npmjs.com/package/ws)
